@@ -395,8 +395,13 @@ class GameVideoGenerator:
     def generate_game_videos(self, dit_path, vae_path, textenc_path, image_path, mouse_icon_path, mouse_scale, mouse_rotation, fps, 
                              output_path, video_length, guidance_scale, inference_steps, shift, num_pre_frames, num_steps, 
                              rel_l1_thresh, resolution_h, resolution_w, bfloat16, max_images, gpu_id):
+        
         resolution = [resolution_w, resolution_h]
-                                 
+                   
+        # Set GPU device if specified
+        if gpu_id and torch.cuda.is_available():
+            os.environ["CUDA_VISIBLE_DEVICES"] = gpu_id
+        
         generator = VideoGenerator(dit_path, vae_path, textenc_path, image_path, mouse_icon_path, mouse_scale, mouse_rotation, fps, 
                              output_path, video_length, guidance_scale, inference_steps, shift, num_pre_frames, num_steps, 
                              rel_l1_thresh, resolution, bfloat16, max_images, gpu_id)
