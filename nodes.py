@@ -58,3 +58,22 @@ class LoadVAEModel:
         vae = vae_path
         return (vae,)
 
+
+class LoadTextEncoderModel:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "textencoder_path": ("STRING", {"default": "models/matrixgame"}),
+            }
+        }
+
+    RETURN_TYPES = ("TEXTENCODER",)
+    RETURN_NAMES = ("textencoder",)
+    FUNCTION = "load_textencoder"
+    CATEGORY = "Matrix-Game"
+
+    def load_textencoder(self, textencoder_path):
+        textencoder = textencoder_path
+        return (textencoder,)
+
