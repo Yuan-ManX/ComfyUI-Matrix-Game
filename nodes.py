@@ -314,7 +314,7 @@ class LoadMouseIcon:
                 "mouse_icon_path": ("STRING", {"default": "models/matrixgame/assets/mouse.png"}),
                 "mouse_scale": ("FLOAT", {"default": 0.1}),
                 "mouse_rotation": ("FLOAT", {"default": -20}),
-                "fps": ("STRING", {"INT": 16}),
+                "fps": ("INT", {"default": 16}),
             }
         }
 
@@ -329,6 +329,52 @@ class LoadMouseIcon:
         mouse_rotation = mouse_rotation
         fps = fps
         return (mouse_icon_path, mouse_scale, mouse_rotation, mouse_rotation, fps)
+
+
+class GameVideoGenerator:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "dit_path": ("DIT",),
+                "vae_path": ("VAE",),
+                "textenc_path": ("TEXTENCODER",),
+                "image_path": ("IMAGE",),
+                "mouse_icon_path": ("MOUSEICON",),
+                "mouse_scale": ("MOUSESCALE",),
+                "mouse_rotation": ("MOUSEROTATION",),
+                "fps": ("FPS",),
+                "output_path": ("OUTPUT",),
+                "video_length": ("INT", {"default": 65}),
+                "guidance_scale": ("FLOAT", {"default": 6}),
+                "inference_steps": ("INT", {"default": 50}),
+                "shift": ("INT", {"default": 15.0}),
+                "num_pre_frames": ("INT", {"default": 5}),
+                "num_steps": ("INT", {"default": 50}),
+                "rel_l1_thresh": ("FLOAT", {"default": 0.075}),
+                "resolution_h": ("INT", {"default": 720}),
+                "resolution_w": ("INT", {"default": 1280}),
+                "bfloat16": ("STRING", {"default": "store_true"}),
+                "max_images": ("INT", {"default": 3}),
+                "gpu_id": ("STRING", {"default": "0"}),
+            }
+        }
+
+    RETURN_TYPES = ()
+    FUNCTION = "generate_game_videos"
+    CATEGORY = "Matrix-Game"
+
+    def generate_game_videos(self, dit_path, vae_path, textenc_path, image_path, mouse_icon_path, mouse_scale, mouse_rotation, fps, 
+                             output_path, video_length, guidance_scale, inference_steps, shift, num_pre_frames, num_steps, 
+                             rel_l1_thresh, resolution_h, resolution_w, bfloat16, max_images, gpu_id):
+        resolution = [resolution_w, resolution_h]
+                                 
+        generator = VideoGenerator(dit_path, vae_path, textenc_path, image_path, mouse_icon_path, mouse_scale, mouse_rotation, fps, 
+                             output_path, video_length, guidance_scale, inference_steps, shift, num_pre_frames, num_steps, 
+                             rel_l1_thresh, resolution_h, resolution_w, bfloat16, max_images, gpu_id)
+                                 
+        generator.generate_videos()
+        return ()
 
 
 class MatrixGameOutput:
