@@ -28,7 +28,7 @@ class VideoGenerator:
     
     def __init__(self, dit_path, vae_path, textenc_path, image_path, mouse_icon_path, mouse_scale, mouse_rotation, fps, 
                  output_path, video_length, guidance_scale, inference_steps, shift, num_pre_frames, num_steps, 
-                 rel_l1_thresh, resolution_h, resolution_w, bfloat16, max_images, gpu_id):
+                 rel_l1_thresh, resolution, bfloat16, max_images, gpu_id):
         """
         Initialize the video generator with configuration parameters.
         """
@@ -369,7 +369,7 @@ class GameVideoGenerator:
                                  
         generator = VideoGenerator(dit_path, vae_path, textenc_path, image_path, mouse_icon_path, mouse_scale, mouse_rotation, fps, 
                              output_path, video_length, guidance_scale, inference_steps, shift, num_pre_frames, num_steps, 
-                             rel_l1_thresh, resolution_h, resolution_w, bfloat16, max_images, gpu_id)
+                             rel_l1_thresh, resolution, bfloat16, max_images, gpu_id)
                                  
         generator.generate_videos()
         return ()
