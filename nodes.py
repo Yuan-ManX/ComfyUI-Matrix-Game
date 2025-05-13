@@ -103,17 +103,23 @@ class LoadMouseIcon:
         return {
             "required": {
                 "mouse_icon_path": ("STRING", {"default": "models/matrixgame/assets/mouse.png"}),
+                "mouse_scale": ("FLOAT", {"default": 0.1}),
+                "mouse_rotation": ("FLOAT", {"default": -20}),
+                "fps": ("STRING", {"INT": 16}),
             }
         }
 
-    RETURN_TYPES = ("MOUSEICON",)
-    RETURN_NAMES = ("mouse_icon",)
+    RETURN_TYPES = ("MOUSEICON", "MOUSESCALE", "MOUSEROTATION", "FPS")
+    RETURN_NAMES = ("mouse_icon", "mouse_scale", "mouse_rotation", "fps")
     FUNCTION = "load_mouse_icon"
     CATEGORY = "Matrix-Game"
 
-    def load_mouse_icon(self, mouse_icon_path):
+    def load_mouse_icon(self, mouse_icon_path, mouse_scale, mouse_rotation, fps):
         mouse_icon = mouse_icon_path
-        return (mouse_icon,)
+        mouse_scale = mouse_scale
+        mouse_rotation = mouse_rotation
+        fps = fps
+        return (mouse_icon, mouse_scale, mouse_rotation, mouse_rotation, fps)
 
 
 class MatrixGameOutput:
