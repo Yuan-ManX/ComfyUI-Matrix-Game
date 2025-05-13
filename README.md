@@ -23,3 +23,7 @@ pip install -r requirements.txt
 
 
 ## Model
+
+[[🤗 Huggingface](https://huggingface.co/Skywork/Matrix-Game)]
+
+
