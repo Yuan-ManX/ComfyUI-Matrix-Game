@@ -26,22 +26,24 @@ from teacache_forward import teacache_forward
 class VideoGenerator:
     """Main class for video generation using MatrixGame model."""
     
-    def __init__(self, args: argparse.Namespace):
+    def __init__(self, dit_path, vae_path, textenc_path, image_path, mouse_icon_path, mouse_scale, mouse_rotation, fps, 
+                 output_path, video_length, guidance_scale, inference_steps, shift, num_pre_frames, num_steps, 
+                 rel_l1_thresh, resolution_h, resolution_w, bfloat16, max_images, gpu_id):
         """
         Initialize the video generator with configuration parameters.
         
         Args:
             args: Parsed command line arguments
         """
-        self.args = args
+
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.scheduler = FlowMatchDiscreteScheduler(
             shift=self.args.shift,
             reverse=True,
             solver="euler"
         )
-        self.video_length = args.video_length
-        self.guidance_scale = args.guidance_scale
+        self.video_length = video_length
+        self.guidance_scale = guidance_scale
         
         # Initialize models
         self._init_models()
@@ -52,19 +54,19 @@ class VideoGenerator:
     def _init_models(self) -> None:
         """Initialize all required models (VAE, text encoder, transformer)."""
         # Initialize VAE
-        vae_path = self.args.vae_path 
+        vae_path = self.vae_path 
         self.vae = get_vae("matrixgame", vae_path, torch.float16)
         self.vae.requires_grad_(False)
         self.vae.eval()
         self.vae.enable_tiling()
         
         # Initialize DIT (Transformer)
-        dit = MGVideoDiffusionTransformerI2V.from_pretrained(self.args.dit_path)
+        dit = MGVideoDiffusionTransformerI2V.from_pretrained(self.dit_path)
         dit.requires_grad_(False)
         dit.eval()
         
         # Initialize text encoder
-        textenc_path = self.args.textenc_path
+        textenc_path = self.textenc_path
         weight_dtype = torch.bfloat16 if self.args.bfloat16 else torch.float32
         self.text_enc = get_text_enc('matrixgame', textenc_path, weight_dtype=weight_dtype, i2v_type='refiner')
         
@@ -80,9 +82,9 @@ class VideoGenerator:
         """Configure teacache for the transformer."""
         self.pipeline.transformer.__class__.enable_teacache = True
         self.pipeline.transformer.__class__.cnt = 0
-        self.pipeline.transformer.__class__.num_steps = self.args.num_steps  # should be aligned with infer_steps
+        self.pipeline.transformer.__class__.num_steps = self.num_steps  # should be aligned with infer_steps
         self.pipeline.transformer.__class__.accumulated_rel_l1_distance = 0
-        self.pipeline.transformer.__class__.rel_l1_thresh = self.args.rel_l1_thresh
+        self.pipeline.transformer.__class__.rel_l1_thresh = self.rel_l1_thresh
         self.pipeline.transformer.__class__.previous_modulated_input = None
         self.pipeline.transformer.__class__.previous_residual = None
         self.pipeline.transformer.__class__.forward = teacache_forward
@@ -146,12 +148,12 @@ class VideoGenerator:
         mouse_condition = torch.tensor(condition['mouse_condition'], dtype=torch.float32).unsqueeze(0)
         
         # Move to device
-        keyboard_condition = keyboard_condition.to(torch.bfloat16 if self.args.bfloat16 else torch.float16).to(self.device)
-        mouse_condition = mouse_condition.to(torch.bfloat16 if self.args.bfloat16 else torch.float16).to(self.device)
+        keyboard_condition = keyboard_condition.to(torch.bfloat16 if self.bfloat16 else torch.float16).to(self.device)
+        mouse_condition = mouse_condition.to(torch.bfloat16 if self.bfloat16 else torch.float16).to(self.device)
         
         # Load and preprocess image
         image = Image.open(image_path).convert("RGB")
-        new_width, new_height = self.args.resolution
+        new_width, new_height = self.resolution
         initial_image = self._resize_and_crop_image(image, (new_width, new_height))
         semantic_image = initial_image
         vae_scale_factor = 2 ** (len(self.vae.config.block_out_channels) - 1)
@@ -159,7 +161,7 @@ class VideoGenerator:
         initial_image = video_processor.preprocess(initial_image, height=new_height, width=new_width)
         
         if self.args.num_pre_frames > 0:
-            past_frames = initial_image.repeat(self.args.num_pre_frames, 1, 1, 1)
+            past_frames = initial_image.repeat(self.num_pre_frames, 1, 1, 1)
             initial_image = torch.cat([initial_image, past_frames], dim=0)
         
         # Generate video
@@ -171,7 +173,7 @@ class VideoGenerator:
                 mouse_condition=mouse_condition,
                 keyboard_condition=keyboard_condition,
                 initial_image=initial_image,
-                num_inference_steps=self.args.inference_steps if hasattr(self.args, 'inference_steps') else 50,
+                num_inference_steps=self.inference_steps if hasattr(self.args, 'inference_steps') else 50,
                 guidance_scale=self.guidance_scale,
                 embedded_guidance_scale=None,
                 data_type="video",
@@ -194,16 +196,16 @@ class VideoGenerator:
         
         action_name = condition['action_name']
         output_filename = f"{os.path.splitext(os.path.basename(image_path))[0]}_{action_name}.mp4"
-        output_path = os.path.join(self.args.output_path, output_filename)
+        output_path = os.path.join(self.output_path, output_filename)
         
         process_video(
             img_tensors,
             output_path,
             config,
-            mouse_icon_path=self.args.mouse_icon_path,
-            mouse_scale=self.args.mouse_scale,
-            mouse_rotation=self.args.mouse_rotation,
-            fps=self.args.fps
+            mouse_icon_path=self.mouse_icon_path,
+            mouse_scale=self.mouse_scale,
+            mouse_rotation=self.mouse_rotation,
+            fps=self.fps
         )
             
 
@@ -211,14 +213,14 @@ class VideoGenerator:
     def generate_videos(self) -> None:
         """Main method to generate videos for all conditions."""
         # Create output directory
-        os.makedirs(self.args.output_path, exist_ok=True)
+        os.makedirs(self.output_path, exist_ok=True)
         
         # Load conditions
         conditions = Bench_actions_76()
         print(f"Found {len(conditions)} conditions to process")
         
         # Load sample images
-        root_dir = self.args.image_path
+        root_dir = self.image_path
         image_paths = self._load_images(root_dir)
         
         if not image_paths:
