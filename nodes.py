@@ -77,3 +77,41 @@ class LoadTextEncoderModel:
         textencoder = textencoder_path
         return (textencoder,)
 
+
+class LoadGameImage:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "game_image_path": ("STRING", {"default": "initial_image/"}),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image",)
+    FUNCTION = "load_image"
+    CATEGORY = "Matrix-Game"
+
+    def load_image(self, game_image_path):
+        image = game_image_path
+        return (image,)
+
+
+class LoadMouseIcon:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "mouse_icon_path": ("STRING", {"default": "models/matrixgame/assets/mouse.png"}),
+            }
+        }
+
+    RETURN_TYPES = ("MOUSEICON",)
+    RETURN_NAMES = ("mouse_icon",)
+    FUNCTION = "load_mouse_icon"
+    CATEGORY = "Matrix-Game"
+
+    def load_mouse_icon(self, mouse_icon_path):
+        mouse_icon = mouse_icon_path
+        return (mouse_icon,)
+
