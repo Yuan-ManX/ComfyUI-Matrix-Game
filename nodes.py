@@ -31,13 +31,13 @@ class LoadDiTModel:
         }}
 
     RETURN_TYPES = ("DIT",)
-    RETURN_NAMES = ("dit",)
+    RETURN_NAMES = ("dit_path",)
     FUNCTION = "load_dit"
     CATEGORY = "Matrix-Game"
 
     def load_dit(self, model_path):
-        dit = model_path
-        return (dit,)
+        dit_path = model_path
+        return (dit_path,)
     
 
 class LoadVAEModel:
@@ -50,13 +50,13 @@ class LoadVAEModel:
         }
 
     RETURN_TYPES = ("VAE",)
-    RETURN_NAMES = ("vae",)
+    RETURN_NAMES = ("vae_path",)
     FUNCTION = "load_vae"
     CATEGORY = "Matrix-Game"
 
     def load_vae(self, vae_path):
-        vae = vae_path
-        return (vae,)
+        vae_path = vae_path
+        return (vae_path,)
 
 
 class LoadTextEncoderModel:
@@ -74,8 +74,8 @@ class LoadTextEncoderModel:
     CATEGORY = "Matrix-Game"
 
     def load_textencoder(self, textencoder_path):
-        textencoder = textencoder_path
-        return (textencoder,)
+        textenc_path = textencoder_path
+        return (textenc_path,)
 
 
 class LoadGameImage:
@@ -88,13 +88,13 @@ class LoadGameImage:
         }
 
     RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("image",)
+    RETURN_NAMES = ("image_path",)
     FUNCTION = "load_image"
     CATEGORY = "Matrix-Game"
 
     def load_image(self, game_image_path):
-        image = game_image_path
-        return (image,)
+        image_path = game_image_path
+        return (image_path,)
 
 
 class LoadMouseIcon:
@@ -110,16 +110,16 @@ class LoadMouseIcon:
         }
 
     RETURN_TYPES = ("MOUSEICON", "MOUSESCALE", "MOUSEROTATION", "FPS")
-    RETURN_NAMES = ("mouse_icon", "mouse_scale", "mouse_rotation", "fps")
+    RETURN_NAMES = ("mouse_icon_path", "mouse_scale", "mouse_rotation", "fps")
     FUNCTION = "load_mouse_icon"
     CATEGORY = "Matrix-Game"
 
     def load_mouse_icon(self, mouse_icon_path, mouse_scale, mouse_rotation, fps):
-        mouse_icon = mouse_icon_path
+        mouse_icon_path = mouse_icon_path
         mouse_scale = mouse_scale
         mouse_rotation = mouse_rotation
         fps = fps
-        return (mouse_icon, mouse_scale, mouse_rotation, mouse_rotation, fps)
+        return (mouse_icon_path, mouse_scale, mouse_rotation, mouse_rotation, fps)
 
 
 class MatrixGameOutput:
@@ -132,11 +132,11 @@ class MatrixGameOutput:
         }
 
     RETURN_TYPES = ("OUTPUT",)
-    RETURN_NAMES = ("output",)
+    RETURN_NAMES = ("output_path",)
     FUNCTION = "load_output_path"
     CATEGORY = "Matrix-Game"
 
     def load_output_path(self, output_path):
-        output = output_path
-        return (output,)
+        output_path = output_path
+        return (output_path,)
 
