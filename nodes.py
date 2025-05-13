@@ -64,7 +64,7 @@ class VideoGenerator:
         
         # Initialize text encoder
         textenc_path = self.textenc_path
-        weight_dtype = torch.bfloat16 if self.args.bfloat16 else torch.float32
+        weight_dtype = torch.bfloat16 if self.bfloat16 else torch.float32
         self.text_enc = get_text_enc('matrixgame', textenc_path, weight_dtype=weight_dtype, i2v_type='refiner')
         
         # Move models to devices
@@ -157,7 +157,7 @@ class VideoGenerator:
         video_processor = VideoProcessor(vae_scale_factor=vae_scale_factor)
         initial_image = video_processor.preprocess(initial_image, height=new_height, width=new_width)
         
-        if self.args.num_pre_frames > 0:
+        if self.num_pre_frames > 0:
             past_frames = initial_image.repeat(self.num_pre_frames, 1, 1, 1)
             initial_image = torch.cat([initial_image, past_frames], dim=0)
         
@@ -170,7 +170,7 @@ class VideoGenerator:
                 mouse_condition=mouse_condition,
                 keyboard_condition=keyboard_condition,
                 initial_image=initial_image,
-                num_inference_steps=self.inference_steps if hasattr(self.args, 'inference_steps') else 50,
+                num_inference_steps=self.inference_steps,
                 guidance_scale=self.guidance_scale,
                 embedded_guidance_scale=None,
                 data_type="video",
@@ -178,7 +178,6 @@ class VideoGenerator:
                 enable_tiling=True,
                 generator=torch.Generator(device="cuda").manual_seed(42),
                 i2v_type='refiner',
-                args=self.args,
                 semantic_images=semantic_image
             ).videos[0]
         
