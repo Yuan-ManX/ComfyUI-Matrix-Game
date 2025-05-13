@@ -33,14 +33,44 @@ class VideoGenerator:
         Initialize the video generator with configuration parameters.
         """
 
+        # Model paths
+        self.dit_path = dit_path
+        self.vae_path = vae_path
+        self.textenc_path = textenc_path
+
+        # Basic parameters
+        self.image_path = image_path
+        self.output_path = output_path
+        self.video_length = video_length
+        self.guidance_scale = guidance_scale
+
+        # Mouse icon parameters
+        self.mouse_icon_path = mouse_icon_path
+        self.mouse_scale = mouse_scale
+        self.mouse_rotation = mouse_rotation
+        self.fps = fps
+                     
+        # Inference parameters             
+        self.inference_steps = inference_steps
+        self.shift = shift
+        self.num_pre_frames = num_pre_frames
+        self.num_steps = num_steps
+        self.rel_l1_thresh = rel_l1_thresh
+
+        # Resolution and format
+        self.resolution = resolution
+        self.bfloat16 = bfloat16
+        self.max_images = max_images
+
+        # GPU settings
+        self.gpu_id = gpu_id
+        
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.scheduler = FlowMatchDiscreteScheduler(
             shift=self.shift,
             reverse=True,
             solver="euler"
         )
-        self.video_length = video_length
-        self.guidance_scale = guidance_scale
         
         # Initialize models
         self._init_models()
