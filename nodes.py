@@ -115,3 +115,22 @@ class LoadMouseIcon:
         mouse_icon = mouse_icon_path
         return (mouse_icon,)
 
+
+class MatrixGameOutput:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "output_path": ("STRING", {"default": "./test"}),
+            }
+        }
+
+    RETURN_TYPES = ("OUTPUT",)
+    RETURN_NAMES = ("output",)
+    FUNCTION = "load_output_path"
+    CATEGORY = "Matrix-Game"
+
+    def load_output_path(self, output_path):
+        output = output_path
+        return (output,)
+
