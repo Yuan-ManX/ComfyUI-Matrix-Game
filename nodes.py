@@ -31,14 +31,11 @@ class VideoGenerator:
                  rel_l1_thresh, resolution_h, resolution_w, bfloat16, max_images, gpu_id):
         """
         Initialize the video generator with configuration parameters.
-        
-        Args:
-            args: Parsed command line arguments
         """
 
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.scheduler = FlowMatchDiscreteScheduler(
-            shift=self.args.shift,
+            shift=self.shift,
             reverse=True,
             solver="euler"
         )
@@ -133,7 +130,7 @@ class VideoGenerator:
         for ext in image_extensions:
             image_paths.extend(glob.glob(os.path.join(root_dir, '**', ext), recursive=True))
             
-        return image_paths[:self.args.max_images] if hasattr(self.args, 'max_images') else image_paths
+        return image_paths[:self.max_images] if hasattr(self, 'max_images') else image_paths
     
     def _process_condition(self, condition: Dict, image_path: str) -> None:
         """
