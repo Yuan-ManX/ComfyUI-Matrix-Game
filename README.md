@@ -18,7 +18,12 @@ git clone https://github.com/Yuan-ManX/ComfyUI-Matrix-Game.git
 3. Install dependencies:
 ```
 cd ComfyUI-Matrix-Game
+
+# install dependencies:
 pip install -r requirements.txt
+
+# install apex and FlashAttention-3
+# Our project also depends on [apex](https://github.com/NVIDIA/apex) and [FlashAttention-3](https://github.com/Dao-AILab/flash-attention)
 ```
 
 
